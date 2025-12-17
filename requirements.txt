@@ -1,0 +1,19 @@
+# Core Testing Framework
+pytest==7.4.3
+pytest-html==4.1.1
+pytest-benchmark==4.0.0
+allure-pytest==2.13.2
+coverage==7.3.2
+
+# Database Drivers
+SQLAlchemy==2.0.23
+psycopg2-binary==2.9.9
+PyMySQL==1.1.0
+alembic==1.12.1
+
+# Utilities
+Faker==20.1.0
+python-dotenv==1.0.0
+requests==2.31.0
+redis==5.0.1
+cryptography==41.0.7
