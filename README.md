@@ -267,11 +267,22 @@ POSTGRES_PASSWORD=qapass123
 📝 License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-👤 Author
-Carolina Steadham
+---
 
-GitHub: @steadhac
-LinkedIn: Carolina Steadham
+## 👤 Author
+
+**Carolina Steadham**
+- GitHub: [@steadhac](https://github.com/steadhac)
+- LinkedIn: [Carolina Steadham](https://linkedin.com/in/carolinacsteadham)
+
+---
+
+<div align="center">
+
+**⭐ Star this repo if you find it helpful!**
+
+Made with ❤️ and Python
+
 
 
 🌟 Acknowledgments
