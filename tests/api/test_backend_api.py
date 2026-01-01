@@ -14,7 +14,7 @@ from framework.base_test import BaseTest
 class TestBackendAPI(BaseTest):
     """Test class for validating backend API endpoints and data flows."""
     
-    def test_api_user_creation_workflow(self):
+    def test_api_001_user_creation_via_api_workflow(self):
         """
         Test user creation via API-style data flow.
         
@@ -54,7 +54,7 @@ class TestBackendAPI(BaseTest):
         self.assertEqual(result[0][0], user_payload['username'])
         self.assertEqual(result[0][1], user_payload['email'])
     
-    def test_api_vault_record_retrieval(self):
+    def test_api_002_vault_record_retrieval(self):
         """
         Test retrieving vault records via API endpoint simulation.
         
@@ -91,7 +91,7 @@ class TestBackendAPI(BaseTest):
         self.assertEqual(len(records), 3)
         self.assertEqual(records[0][2], 'password')
     
-    def test_api_error_handling_invalid_data(self):
+    def test_api_003_api_error_handling_for_invalid_data(self):
         """
         Test API error handling for invalid data submissions.
         
