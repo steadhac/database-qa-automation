@@ -22,7 +22,7 @@
 - vault_users table exists
 
 **Test Steps**:
-1. Insert new user with username 'testuser' and email 'test@keeper.com'
+1. Insert new user with username 'testuser' and email 'test@vault.com'
 2. Execute SELECT query to retrieve user by username
 3. Verify record exists and data matches
 
@@ -30,9 +30,9 @@
 - User record is created successfully
 - SELECT query returns 1 record
 - Username equals 'testuser'
-- Email equals 'test@keeper.com'
+- Email equals 'test@vault.com'
 
-**Test Data**: username='testuser', email='test@keeper.com'
+**Test Data**: username='testuser', email='test@vault.com'
 
 **Status**: ✅ Pass
 
@@ -45,7 +45,7 @@
 **Preconditions**: User exists in vault_users, Vault record exists for user
 
 **Test Steps**:
-1. Create user 'user1' with email 'user1@keeper.com'
+1. Create user 'user1' with email 'user1@vault.com'
 2. Insert vault record with title 'Password' and encrypted_data 'encrypted_v1'
 3. Execute UPDATE to change encrypted_data to 'encrypted_v2'
 4. Verify updated_at timestamp is refreshed
@@ -167,7 +167,7 @@
 **Preconditions**: vault_users table has UNIQUE constraints on username and email
 
 **Test Steps**:
-1. Insert user with username 'john' and email 'john@keeper.com'
+1. Insert user with username 'john' and email 'john@vault.com'
 2. Attempt to insert second user with same username 'john' but different email
 3. Catch exception
 
@@ -322,7 +322,7 @@
 **Preconditions**: Database connection available
 
 **Test Steps**:
-1. Create JSON payload username api_user email api@keeper.com
+1. Create JSON payload username api_user email api@vault.com
 2. Simulate backend parsing payload
 3. Insert into database
 4. Query to verify creation
@@ -430,8 +430,8 @@
 **Preconditions**: User exists
 
 **Test Steps**:
-1. Create user 'query_test' with email 'query@keeper.com'
-2. Simulate CLI SELECT username FROM vault_users WHERE email LIKE '%keeper.com'
+1. Create user 'query_test' with email 'query@vault.com'
+2. Simulate CLI SELECT username FROM vault_users WHERE email LIKE '%vault.com'
 3. Verify results
 
 **Expected Results**: Query executes successfully, Returns records matching WHERE clause, query_test included in results
