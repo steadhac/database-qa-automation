@@ -16,12 +16,16 @@ htmlcov/
 .coverage
 allure-results/
 allure-report/
+
 # Environment
 .env
+
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+
 # OS
 .DS_Store
+.env

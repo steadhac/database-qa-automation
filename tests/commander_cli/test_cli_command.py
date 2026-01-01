@@ -13,7 +13,7 @@ from framework.base_test import BaseTest
 class TestCLICommands(BaseTest):
     """Test class for validating CLI commands and database scripting."""
     
-    def test_cli_user_export_command(self):
+    def test_cli_001_export_users_command(self):
         """
         Test CLI command to export user data from database.
         
@@ -46,7 +46,7 @@ class TestCLICommands(BaseTest):
         self.assertEqual(users[0][0], 'cli_user1')
         self.assertEqual(users[1][0], 'cli_user2')
     
-    def test_cli_bulk_delete_command(self):
+    def test_cli_002_bulk_delete_operation(self):
         """
         Test CLI bulk delete operation for data cleanup.
         
@@ -83,7 +83,7 @@ class TestCLICommands(BaseTest):
         remaining = self.db.execute_query("SELECT COUNT(*) FROM vault_records WHERE user_id = %s", (user_id,))
         self.assertEqual(remaining[0][0], 0)
     
-    def test_cli_database_stats_command(self):
+    def test_cli_003_database_stats_query(self):
         """
         Test CLI command to retrieve database statistics.
         
@@ -111,7 +111,7 @@ class TestCLICommands(BaseTest):
         
         self.assertGreaterEqual(user_count[0][0], 3)
     
-    def test_cli_query_execution_tool(self):
+    def test_cli_004_custom_query_execution(self):
         """
         Test CLI tool for executing custom SQL queries.
         
