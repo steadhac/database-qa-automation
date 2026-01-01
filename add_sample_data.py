@@ -8,11 +8,11 @@ print("Adding sample data...")
 # Add users
 db.execute_query(
     "INSERT INTO vault_users (username, email) VALUES (%s, %s)",
-    ('john_doe', 'john@keeper.com')
+    ('john_doe', 'john@vault.com')
 )
 db.execute_query(
     "INSERT INTO vault_users (username, email) VALUES (%s, %s)",
-    ('jane_smith', 'jane@keeper.com')
+    ('jane_smith', 'jane@vault.com')
 )
 
 # Get user IDs

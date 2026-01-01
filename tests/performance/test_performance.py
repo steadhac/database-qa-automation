@@ -13,7 +13,7 @@ from framework.base_test import BaseTest
 class TestPerformance(BaseTest):
     """Test class for validating database performance and query optimization."""
     
-    def test_bulk_insert_performance(self):
+    def test_perf_001_bulk_insert_performance(self):
         """
         Test performance of bulk insert operations for vault records.
         
@@ -50,7 +50,7 @@ class TestPerformance(BaseTest):
         execution_time = end_time - start_time
         self.assertLess(execution_time, 5.0, f"Bulk insert took {execution_time:.2f}s, expected < 5s")
     
-    def test_query_with_index_performance(self):
+    def test_perf_002_indexed_query_performance(self):
         """
         Test that indexed queries on user_id perform efficiently.
         

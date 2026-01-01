@@ -8,7 +8,7 @@ Tests verify encrypted data storage, retrieval, and metadata tracking including:
 - Key management for encrypted data
 
 Encryption Standard: AES-256-GCM
-- Used by: Keeper Security, 1Password, LastPass, Bitwarden
+- Used by: Vault Security, 1Password, LastPass, Bitwarden
 - FIPS 140-2 compliant
 - Provides both encryption and authentication
 - Prevents tampering and replay attacks
@@ -37,7 +37,7 @@ class TestVaultOperations(BaseTest):
         - Built-in integrity verification (no separate HMAC needed)
         - Prevents tampering, replay attacks, and chosen-ciphertext attacks
         
-        This is the same encryption standard used by Keeper Security, 1Password,
+        This is the same encryption standard used by Vault Security, 1Password,
         LastPass, and other enterprise password managers.
         
         Args:
