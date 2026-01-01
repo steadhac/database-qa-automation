@@ -302,7 +302,6 @@ LinkedIn: Carolina Steadham
 
 ⭐ Star this repo if you find it helpful!
 
-Made with ❤️ and Python
 
 </div>
 
@@ -315,7 +314,7 @@ Performance optimization techniques
 Docker containerization best practices
 <div align="center">
 
-Built with ❤️ for Database Quality Assurance Excellence
+Built with Python and ❤️ for Database Quality Assurance Excellence
 
 Report Bug · Request Feature
 
