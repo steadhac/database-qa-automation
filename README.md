@@ -319,4 +319,4 @@ Built with ❤️ for Database Quality Assurance Excellence
 
 Report Bug · Request Feature
 
-</div> ```
+</div>
