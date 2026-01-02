@@ -25,3 +25,5 @@ allure-report/
 *.swo
 # OS
 .DS_Store
+.venv/
+venv/
