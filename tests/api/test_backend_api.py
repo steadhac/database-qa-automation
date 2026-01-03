@@ -24,7 +24,26 @@ class TestBackendAPI(BaseTest):
     def test_api_001_user_creation_via_api_workflow(self):
         """
         API-001: User Creation via API JSON workflow
-        ... (docstring unchanged) ...
+
+        Objective:
+        Validate that the API correctly handles user creation via JSON payloads,
+        ensuring data is serialized, deserialized, and persisted as expected.
+
+        Preconditions:
+        - API endpoint accepts JSON payload for user creation
+        - vault_users table exists
+
+        Test Steps:
+        1. Simulate API receiving JSON payload for new user
+        2. Serialize and deserialize payload
+        3. Insert user into database
+        4. Query database for inserted user
+        5. Serialize response as JSON
+
+        Expected Results:
+        - User is inserted into database
+        - Response JSON matches input data
+        - No errors occur during serialization/deserialization
         """
         logging.info("API-001: Simulating API receiving JSON payload for user creation")
         request_payload = {"username": "api_user", "email": "api@vault.com"}
@@ -53,7 +72,24 @@ class TestBackendAPI(BaseTest):
     def test_api_002_vault_record_retrieval(self):
         """
         API-002: Vault Record Retrieval via API JSON flow
-        ... (docstring unchanged) ...
+
+        Objective:
+        Ensure the API can retrieve all vault records for a user and return them as a JSON array.
+
+        Preconditions:
+        - User exists in vault_users
+        - vault_records table contains records for the user
+
+        Test Steps:
+        1. Insert test user and associated vault records
+        2. Query for all vault records for the user
+        3. Serialize records as JSON array
+        4. Deserialize and validate response
+
+        Expected Results:
+        - All records are returned for the user
+        - JSON response contains correct titles and record types
+        - No extraneous records are included
         """
         logging.info("API-002: Inserting test user for vault record retrieval")
         self.db_utils.safe_execute(
@@ -95,7 +131,23 @@ class TestBackendAPI(BaseTest):
     def test_api_003_api_error_handling_for_invalid_data(self):
         """
         API-003: API Error Handling for Invalid Payloads
-        ... (docstring unchanged) ...
+
+        Objective:
+        Validate that the API returns a clear error when given invalid or non-existent user data,
+        and that database constraints are enforced.
+
+        Preconditions:
+        - Foreign key constraints exist between vault_records and vault_users
+
+        Test Steps:
+        1. Simulate API receiving invalid JSON payload (non-existent user_id)
+        2. Attempt to insert record with invalid user_id
+        3. Catch and serialize error response
+
+        Expected Results:
+        - Insert fails with foreign key constraint violation
+        - API returns error message indicating the constraint failure
+        - No orphaned record is created
         """
         logging.info("API-003: Simulating API receiving invalid JSON payload")
         invalid_payload = {"user_id": 99999, "title": "Invalid", "encrypted_data": "data"}
