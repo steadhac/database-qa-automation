@@ -8,6 +8,7 @@ Tests verify query execution time, bulk operation efficiency, and index optimiza
 """
 
 import time
+import logging
 from framework.base_test import BaseTest
 
 class TestPerformance(BaseTest):
@@ -30,15 +31,15 @@ class TestPerformance(BaseTest):
         - All 100 records are successfully inserted
         - Total execution time is less than 5 seconds
         """
-        # Create user
+        logging.info("PERF-001: Creating user 'perfuser' for bulk insert test")
         self.db.execute_query(
             "INSERT INTO vault_users (username, email) VALUES (%s, %s)",
             ('perfuser', 'perf@vault.com')
         )
         user = self.db.execute_query("SELECT user_id FROM vault_users WHERE username = %s", ('perfuser',))
         user_id = user[0][0]
+        logging.info("PERF-001: Created user_id=%s", user_id)
         
-        # Bulk insert with timing
         start_time = time.time()
         for i in range(100):
             self.db.execute_query(
@@ -46,10 +47,11 @@ class TestPerformance(BaseTest):
                 (user_id, f'Record_{i}', f'encrypted_data_{i}')
             )
         end_time = time.time()
-        
         execution_time = end_time - start_time
+        logging.info("PERF-001: Bulk insert of 100 records took %.2fs", execution_time)
         self.assertLess(execution_time, 5.0, f"Bulk insert took {execution_time:.2f}s, expected < 5s")
-    
+        logging.info("PERF-001: Bulk insert performance test passed.")
+
     def test_perf_002_indexed_query_performance(self):
         """
         Test that indexed queries on user_id perform efficiently.
@@ -68,29 +70,30 @@ class TestPerformance(BaseTest):
         - Execution time is well under 100ms threshold
         - Index improves performance vs non-indexed query
         """
-        # Create user and records
+        logging.info("PERF-002: Creating user 'indexuser' for indexed query test")
         self.db.execute_query(
             "INSERT INTO vault_users (username, email) VALUES (%s, %s)",
             ('indexuser', 'index@vault.com')
         )
         user = self.db.execute_query("SELECT user_id FROM vault_users WHERE username = %s", ('indexuser',))
         user_id = user[0][0]
+        logging.info("PERF-002: Created user_id=%s", user_id)
         
-        # Insert test data
         for i in range(50):
             self.db.execute_query(
                 "INSERT INTO vault_records (user_id, title, encrypted_data) VALUES (%s, %s, %s)",
                 (user_id, f'Title_{i}', f'data_{i}')
             )
+        logging.info("PERF-002: Inserted 50 records for user_id=%s", user_id)
         
-        # Test query performance with timing
         start_time = time.time()
         result = self.db.execute_query(
             "SELECT * FROM vault_records WHERE user_id = %s",
             (user_id,)
         )
         end_time = time.time()
-        
-        self.assertEqual(len(result), 50)
         execution_time = end_time - start_time
+        logging.info("PERF-002: Indexed query returned %d records in %.4fs", len(result), execution_time)
+        self.assertEqual(len(result), 50)
         self.assertLess(execution_time, 0.1, f"Indexed query took {execution_time:.4f}s, expected < 0.1s")
+        logging.info("PERF-002: Indexed query performance test passed.")

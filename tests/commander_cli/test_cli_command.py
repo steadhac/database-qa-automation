@@ -8,6 +8,7 @@ Tests verify command-line interface operations, database scripting, and admin to
 - Query execution through command interface
 """
 
+import logging
 from framework.base_test import BaseTest
 
 class TestCLICommands(BaseTest):
@@ -16,20 +17,8 @@ class TestCLICommands(BaseTest):
     def test_cli_001_export_users_command(self):
         """
         Test CLI command to export user data from database.
-        
-        Validates:
-        - SELECT query execution via CLI tool
-        - Data retrieval for reporting/export
-        - Output format is correct
-        
-        CLI Command Simulation:
-        $ vault-cli export-users --format=csv
-        
-        Expected Result:
-        - All users are retrieved from database
-        - Data format is suitable for export
         """
-        # Create test users
+        logging.info("CLI-001: Creating test users for export command")
         self.db.execute_query(
             "INSERT INTO vault_users (username, email) VALUES (%s, %s)",
             ('cli_user1', 'cli1@vault.com')
@@ -39,106 +28,76 @@ class TestCLICommands(BaseTest):
             ('cli_user2', 'cli2@vault.com')
         )
         
-        # Simulate CLI export command
+        logging.info("CLI-001: Simulating CLI export-users command")
         users = self.db.execute_query("SELECT username, email FROM vault_users ORDER BY username")
+        logging.info("CLI-001: Exported users: %s", users)
         
         self.assertEqual(len(users), 2)
         self.assertEqual(users[0][0], 'cli_user1')
         self.assertEqual(users[1][0], 'cli_user2')
-    
+        logging.info("CLI-001: Export users command test passed.")
+
     def test_cli_002_bulk_delete_operation(self):
         """
         Test CLI bulk delete operation for data cleanup.
-        
-        Validates:
-        - Bulk DELETE operations execute correctly
-        - Transaction integrity during bulk operations
-        - Cleanup commands work as expected
-        
-        CLI Command Simulation:
-        $ vault-cli delete-records --user-id=123 --confirm
-        
-        Expected Result:
-        - All records for user are deleted
-        - Cascade delete works via CLI
         """
-        # Create user and records
+        logging.info("CLI-002: Creating user and records for bulk delete test")
         self.db.execute_query(
             "INSERT INTO vault_users (username, email) VALUES (%s, %s)",
             ('bulk_delete', 'bulk@vault.com')
         )
         user = self.db.execute_query("SELECT user_id FROM vault_users WHERE username = %s", ('bulk_delete',))
         user_id = user[0][0]
+        logging.info("CLI-002: Created user_id=%s", user_id)
         
         for i in range(5):
             self.db.execute_query(
                 "INSERT INTO vault_records (user_id, title, encrypted_data) VALUES (%s, %s, %s)",
                 (user_id, f'Record {i}', 'data')
             )
+        logging.info("CLI-002: Inserted 5 records for user_id=%s", user_id)
         
-        # Simulate CLI bulk delete command
+        logging.info("CLI-002: Simulating CLI bulk delete command")
         self.db.execute_query("DELETE FROM vault_records WHERE user_id = %s", (user_id,))
         
-        # Verify deletion
         remaining = self.db.execute_query("SELECT COUNT(*) FROM vault_records WHERE user_id = %s", (user_id,))
+        logging.info("CLI-002: Remaining records after delete: %s", remaining)
         self.assertEqual(remaining[0][0], 0)
-    
+        logging.info("CLI-002: Bulk delete operation test passed.")
+
     def test_cli_003_database_stats_query(self):
         """
         Test CLI command to retrieve database statistics.
-        
-        Validates:
-        - Aggregate queries execute correctly
-        - Statistics are accurate
-        - COUNT and JOIN operations work
-        
-        CLI Command Simulation:
-        $ vault-cli stats --table=vault_records
-        
-        Expected Result:
-        - Accurate counts and statistics
-        - Query performance is acceptable
         """
-        # Create test data
+        logging.info("CLI-003: Creating test users for stats query")
         for i in range(3):
             self.db.execute_query(
                 "INSERT INTO vault_users (username, email) VALUES (%s, %s)",
                 (f'stats_user{i}', f'stats{i}@vault.com')
             )
-        
-        # Simulate CLI stats command
+        logging.info("CLI-003: Simulating CLI stats command")
         user_count = self.db.execute_query("SELECT COUNT(*) FROM vault_users")
-        
+        logging.info("CLI-003: User count: %s", user_count)
         self.assertGreaterEqual(user_count[0][0], 3)
-    
+        logging.info("CLI-003: Database stats query test passed.")
+
     def test_cli_004_custom_query_execution(self):
         """
         Test CLI tool for executing custom SQL queries.
-        
-        Validates:
-        - Raw SQL execution via CLI
-        - Query results are returned correctly
-        - Complex queries (JOIN, WHERE) work
-        
-        CLI Command Simulation:
-        $ vault-cli query "SELECT * FROM vault_users WHERE email LIKE '%vault.com'"
-        
-        Expected Result:
-        - Query executes successfully
-        - Results match WHERE clause criteria
         """
-        # Create test user
+        logging.info("CLI-004: Creating test user for custom query execution")
         self.db.execute_query(
             "INSERT INTO vault_users (username, email) VALUES (%s, %s)",
             ('query_test', 'query@vault.com')
         )
         
-        # Simulate CLI query command
+        logging.info("CLI-004: Simulating CLI custom query command")
         result = self.db.execute_query(
             "SELECT username FROM vault_users WHERE email LIKE %s",
             ('%vault.com',)
         )
-        
+        logging.info("CLI-004: Query result: %s", result)
         self.assertGreater(len(result), 0)
         usernames = [row[0] for row in result]
         self.assertIn('query_test', usernames)
+        logging.info("CLI-004: Custom query execution test passed.")
