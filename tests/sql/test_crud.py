@@ -7,6 +7,7 @@ Tests verify basic database operations including:
 - Cascade deletion of related records
 """
 
+import logging
 from framework.base_test import BaseTest
 
 class TestCRUDOperations(BaseTest):
@@ -35,22 +36,24 @@ class TestCRUDOperations(BaseTest):
         - Username equals 'testuser'
         - Email equals 'test@vault.com'
         """
-        # Create
+        logging.info("SQL-001: Inserting user 'testuser' with email 'test@vault.com'")
         self.db.execute_query(
             "INSERT INTO vault_users (username, email) VALUES (%s, %s)",
             ('testuser', 'test@vault.com')
         )
         
-        # Read
+        logging.info("SQL-001: Selecting user 'testuser' from vault_users")
         result = self.db.execute_query(
             "SELECT username, email FROM vault_users WHERE username = %s",
             ('testuser',)
         )
+        logging.info("SQL-001: Query result: %s", result)
         
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0][0], 'testuser')
         self.assertEqual(result[0][1], 'test@vault.com')
-    
+        logging.info("SQL-001: User created and read successfully.")
+
     def test_sql_002_update_vault_record(self):
         """
         SQL-002: Update Vault Record Data
@@ -76,30 +79,32 @@ class TestCRUDOperations(BaseTest):
         - updated_at timestamp is modified
         - Only 1 record exists (no duplicates created)
         """
-        # Create user
+        logging.info("SQL-002: Inserting user 'user1' for update test")
         self.db.execute_query(
             "INSERT INTO vault_users (username, email) VALUES (%s, %s)",
             ('user1', 'user1@vault.com')
         )
         user = self.db.execute_query("SELECT user_id FROM vault_users WHERE username = %s", ('user1',))
         user_id = user[0][0]
+        logging.info("SQL-002: Created user_id=%s", user_id)
         
-        # Create record
+        logging.info("SQL-002: Inserting vault record for user_id=%s", user_id)
         self.db.execute_query(
             "INSERT INTO vault_records (user_id, title, encrypted_data) VALUES (%s, %s, %s)",
             (user_id, 'Password', 'encrypted_v1')
         )
         
-        # Update
+        logging.info("SQL-002: Updating encrypted_data for title 'Password'")
         self.db.execute_query(
             "UPDATE vault_records SET encrypted_data = %s, updated_at = CURRENT_TIMESTAMP WHERE title = %s",
             ('encrypted_v2', 'Password')
         )
         
-        # Verify
         result = self.db.execute_query("SELECT encrypted_data FROM vault_records WHERE title = %s", ('Password',))
+        logging.info("SQL-002: Updated record result: %s", result)
         self.assertEqual(result[0][0], 'encrypted_v2')
-    
+        logging.info("SQL-002: Vault record updated successfully.")
+
     def test_sql_003_delete_cascade(self):
         """
         SQL-003: Delete with Cascade Validation
@@ -124,22 +129,25 @@ class TestCRUDOperations(BaseTest):
         - Query returns 0 records for deleted user_id
         - No orphaned records remain
         """
-        # Create user and record
+        logging.info("SQL-003: Inserting user 'deleteuser' for cascade delete test")
         self.db.execute_query(
             "INSERT INTO vault_users (username, email) VALUES (%s, %s)",
             ('deleteuser', 'delete@vault.com')
         )
         user = self.db.execute_query("SELECT user_id FROM vault_users WHERE username = %s", ('deleteuser',))
         user_id = user[0][0]
+        logging.info("SQL-003: Created user_id=%s", user_id)
         
+        logging.info("SQL-003: Inserting vault record for user_id=%s", user_id)
         self.db.execute_query(
             "INSERT INTO vault_records (user_id, title, encrypted_data) VALUES (%s, %s, %s)",
             (user_id, 'Test', 'data')
         )
         
-        # Delete user
+        logging.info("SQL-003: Deleting user_id=%s from vault_users", user_id)
         self.db.execute_query("DELETE FROM vault_users WHERE user_id = %s", (user_id,))
         
-        # Verify records are also deleted
         records = self.db.execute_query("SELECT * FROM vault_records WHERE user_id = %s", (user_id,))
+        logging.info("SQL-003: Records after user deletion: %s", records)
         self.assertEqual(len(records), 0)
+        logging.info("SQL-003: Cascade delete verified successfully.")
