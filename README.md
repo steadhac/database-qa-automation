@@ -1,7 +1,6 @@
 # Database QA Automation Test Suite
 
 > A comprehensive automated testing framework demonstrating professional database quality assurance practices with production-grade encryption.
-
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791.svg)](https://www.postgresql.org/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1.svg)](https://www.mysql.com/)
@@ -10,8 +9,9 @@
 [![Docker](https://img.shields.io/badge/Docker-Latest-2496ED.svg)](https://www.docker.com/)
 [![Redis](https://img.shields.io/badge/Redis-7-DC382D.svg)](https://redis.io/)
 [![AES-256-GCM](https://img.shields.io/badge/AES--256--GCM-Encryption-red.svg)](https://en.wikipedia.org/wiki/Galois/Counter_Mode)
-[![Coverage](https://img.shields.io/badge/Coverage-Analysis-brightgreen.svg)](https://coverage.readthedocs.io/)
-[![API Testing](https://img.shields.io/badge/API-Testing-orange.svg)](https://requests.readthedocs.io/)
+[![EXPLAIN ANALYZE](https://img.shields.io/badge/EXPLAIN%20ANALYZE-Query%20Optimization-cyan.svg)](https://www.postgresql.org/docs/current/sql-explain.html)
+[![Visualization](https://img.shields.io/badge/Test%20Visualization-Matplotlib-blue.svg)](database-tests-map.py)
+[![Data Integrity](https://img.shields.io/badge/Data%20Integrity-Constraints-green.svg)](docs/TEST_CASES.md)
 [![Pydantic](https://img.shields.io/badge/Pydantic-Data%20Validation-purple.svg)](https://docs.pydantic.dev/)
 
 ## 🎯 Overview
@@ -51,29 +51,41 @@ This project showcases enterprise-level database testing capabilities, including
 ```bash
 database-qa-automation/
 │
-├── 📂 framework/               # Core testing framework
-│   ├── base_test.py           # Base test class with setup/teardown
-│   └── db_manager.py          # Database connection manager
+├── 📂 framework/                    # Core testing framework
+│   ├── __init__.py                 # Package initialization
+│   ├── base_test.py                # Base test class with setup/teardown
+│   └── db_manager.py               # Database connection manager
 │
-├── 📂 tests/                   # Test suite (22+ test cases)
-│   ├── sql/                   # CRUD & encryption (7 tests)
-│   ├── integrity/             # Data integrity (3 tests)
-│   ├── performance/           # Benchmarks (2 tests)
-│   ├── migrations/            # Schema validation (3 tests)
-│   ├── api/                   # API workflows (3 tests)
-│   └── commander_cli/         # CLI operations (4 tests)
+├── 📂 tests/                        # Test suite (24 test cases)
+│   ├── sql/                        # SQL operations (8 tests)
+│   │   ├── test_crud.py           # CRUD tests (SQL-001, 002, 003)
+│   │   └── test_vault.py          # Vault & encryption (SQL-004 to 008)
+│   ├── integrity/                 # Data integrity (3 tests)
+│   │   └── test_data_integrity.py
+│   ├── performance/               # Performance benchmarks (3 tests)
+│   │   └── test_performance.py    # PERF-001, 002, 003 with EXPLAIN ANALYZE
+│   ├── migrations/                # Schema validation (3 tests)
+│   │   └── test_schema.py
+│   ├── api/                       # API backend (3 tests)
+│   │   └── test_backend_api.py
+│   └── commander_cli/             # CLI operations (4 tests)
+│       └── test_cli_commands.py
 │
-├── 📂 docs/                    # Documentation
-│   ├── TEST_PLAN.md           # Comprehensive test strategy
-│   ├── TEST_CASES.md          # Detailed specifications
-│   └── blog_post.md           # Technical deep-dive
+├── 📂 docs/                        # Documentation
+│   ├── TEST_PLAN.md               # Comprehensive test strategy
+│   ├── TEST_CASES.md              # Detailed test specifications (24 tests)
+│   ├── PERFORMANCE_TESTING_GUIDE.md # EXPLAIN ANALYZE & performance testing
+│   └── blog_post.md               # Technical deep-dive
 │
-├── 📄 docker-compose.yml       # PostgreSQL, MySQL, Redis
-├── 📄 setup_db.py             # Database initialization
-├── 📄 inspect_db.py           # Database inspection tool
-├── 📄 requirements.txt        # Python dependencies
-└── 📄 .env                    # Environment configuration
-
+├── 📄 docker-compose.yml           # PostgreSQL, MySQL, Redis services
+├── 📄 setup_db.py                 # Database initialization with pgcrypto
+├── 📄 inspect_db.py               # Database inspection utility
+├── 📄 database-tests-map.py       # Test visualization generator
+├── 📄 requirements.txt            # Python dependencies
+├── 📄 .env                        # Environment configuration (git ignored)
+├── 📄 .gitignore                  # Git ignore rules
+├── 📄 README.md                   # Project documentation
+└── 📄 LICENSE                     # MIT License
 ```
 ### 🚀 Quick Start
 Prerequisites
@@ -99,6 +111,7 @@ POSTGRES_PORT=5432
 POSTGRES_DB=vault_db
 POSTGRES_USER=vault_admin
 POSTGRES_PASSWORD=secure_password_123
+POSTGRES_ADMIN_USER=YOUR_USENAME
 
 # MySQL Configuration
 MYSQL_HOST=localhost
@@ -331,6 +344,7 @@ The .env file stores sensitive configuration. Never commit this file to version 
 ### 📚 Documentation
 TEST_PLAN.md - Comprehensive test strategy & scope
 TEST_CASES.md - Detailed test specifications with IDs
+PERFORMANCE_TESTING_GUIDE.md - Explains how PostgreSQL's `EXPLAIN ANALYZE` feature is used to inspect query execution plans, validate index usage, measure true database execution time, and detect performance regressions.
 
 ---
 

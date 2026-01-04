@@ -210,15 +210,14 @@ Actual Total Time (8-20ms)
 Example: Query took 8.432ms = pure database time
 
 ## Why Timing Differs
-```table
 
-Component	PERF-002	PERF-003
-Network latency	✅ Included	❌ Excluded
-Driver overhead	✅ Included	❌ Excluded
-Python processing	✅ Included	❌ Excluded
-PostgreSQL execution	✅ Included	✅ Included
-Typical Range	45-100ms	8-20ms
-```
+| Component | PERF-002 (End-to-End) | PERF-003 (Database Only) |
+|-----------|----------------------|-------------------------|
+| Network latency | ✅ Included | ❌ Excluded |
+| Driver overhead (psycopg2) | ✅ Included | ❌ Excluded |
+| Python processing | ✅ Included | ❌ Excluded |
+| PostgreSQL execution | ✅ Included | ✅ Included |
+| **Typical Time** | **45-100ms** | **8-20ms** |
 
 ## Which One Matters?
 
