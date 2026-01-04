@@ -97,3 +97,75 @@ class TestPerformance(BaseTest):
         self.assertEqual(len(result), 50)
         self.assertLess(execution_time, 0.1, f"Indexed query took {execution_time:.4f}s, expected < 0.1s")
         logging.info("PERF-002: Indexed query performance test passed.")
+
+    def test_perf_003_indexed_query_performance_explain_analyze(self):
+        """
+        PERF-003: Indexed Query Performance with EXPLAIN ANALYZE
+
+        Priority: High
+
+        Objective:
+        Validate that indexed queries on user_id perform efficiently and that the
+        database planner uses indexes correctly.
+
+        Preconditions:
+        - Database connection established
+        - User exists with multiple vault records
+        - Index exists on vault_records.user_id
+
+        Test Steps:
+        1. Insert a test user
+        2. Insert multiple vault records for that user
+        3. Run EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) on SELECT query
+        4. Parse JSON plan
+        5. Verify query plan uses an Index Scan
+        6. Verify actual execution time is below threshold (50ms)
+        
+        Expected Results:
+        - Query plan uses Index Scan or Bitmap Index Scan
+        - Actual query execution time is < 50ms
+        - Buffers show reasonable usage
+        """
+
+        logging.info("PERF-003: Creating user 'indexuser' for indexed query test")
+        self.db.execute_query(
+            "INSERT INTO vault_users (username, email) VALUES (%s, %s)",
+            ('indexuser', 'index@vault.com')
+        )
+        user = self.db.execute_query(
+            "SELECT user_id FROM vault_users WHERE username = %s",
+            ('indexuser',)
+        )
+        self.assertIsNotNone(user)
+        user_id = user[0][0]
+        logging.info("PERF-003: Created user_id=%s", user_id)
+
+        # Step 2: Insert multiple vault records
+        for i in range(50):
+            self.db.execute_query(
+                "INSERT INTO vault_records (user_id, title, encrypted_data) VALUES (%s, %s, %s)",
+                (user_id, f'Title_{i}', f'data_{i}')
+            )
+        logging.info("PERF-003: Inserted 50 records for user_id=%s", user_id)
+
+        # Step 3: Run EXPLAIN ANALYZE in JSON format
+        explain_result = self.db.execute_query(
+            "EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) SELECT * FROM vault_records WHERE user_id = %s",
+            (user_id,)
+        )
+        self.assertIsNotNone(explain_result)
+
+        # Step 4: Parse JSON plan
+        plan_json = explain_result[0][0][0]  # PostgreSQL returns list -> list -> dict
+        plan_node = plan_json['Plan']
+        node_type = plan_node['Node Type']
+        actual_time = plan_node['Actual Total Time']
+        buffers_hit = plan_node.get('Shared Hit Blocks', 0)
+
+        logging.info("PERF-003: Query Plan Node Type: %s", node_type)
+        logging.info("PERF-003: Actual Total Time: %.4f ms", actual_time)
+        logging.info("PERF-003: Shared Hit Blocks: %d", buffers_hit)
+
+        # Step 5: Assertions
+        self.assertIn(node_type, ['Index Scan', 'Bitmap Index Scan'])
+        self.assertLess(actual_time, 50, f"Query execution took {actual_time}ms, expected < 50ms")

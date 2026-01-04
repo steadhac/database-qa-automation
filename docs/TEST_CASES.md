@@ -4,7 +4,7 @@
 - **Project**: Database QA Automation for Secure Vault Systems
 - **Version**: 2.0
 - **Author**: Caro Steadham
-- **Date**: December 17, 2025
+- **Date**: January 3, 2026
 - **Total Test Cases**: 20
 
 ---
@@ -154,6 +154,35 @@
 
 **Status**: ✅ Pass
 
+#### SQL-008: Encrypted Data Integrity Checksum Verification
+**Priority**: High  
+**Objective**: Validate encrypted data integrity using SHA-256 checksums to detect corruption
+
+**Preconditions**: pgcrypto extension enabled in PostgreSQL, digest() and encode() functions available
+
+**Test Steps**:
+1. Create user 'checksum_user' for integrity testing
+2. Generate simulated encrypted data for checksum test
+3. Insert vault record with encrypted data for user
+4. Compute SHA-256 checksum of encrypted_data immediately after insert
+5. Re-read encrypted_data from database
+6. Compute SHA-256 checksum of re-read data
+7. Compare checksums from insert and re-read operations
+
+**Expected Results**: Initial checksum computed successfully after insert, Re-read checksum matches initial checksum exactly, Checksums are identical (no data corruption), Demonstrates data integrity through cryptographic hashing
+
+**Test Data**: 
+- Username: 'checksum_user'
+- Encrypted data: simulated encrypted payload
+- Hash algorithm: SHA-256
+- Expected checksum format: 64-character hexadecimal string
+
+**SQL Query Used**:
+```sql
+SELECT encode(digest(encrypted_data::bytea, 'sha256'), 'hex')
+FROM vault_records
+WHERE user_id = %s
+```
 ---
 
 ## Test Category 2: Data Integrity
@@ -254,6 +283,42 @@
 
 **Benchmark**: < 100ms  
 **Status**: ✅ Pass
+
+---
+
+#### PERF-003: Query Execution Plan & Index Usage Validation
+**Priority**: High
+**Objective**: Validate that indexed queries on vault_records.user_id perform efficiently and that the PostgreSQL query planner uses indexes correctly.
+
+**Preconditions**: Database connection established, vault_records.user_id column is indexed, User and vault_records tables exist, PostgreSQL query planner enabled (default)
+
+**Test Steps**:
+1. Create user indexuser
+2. Insert 50 vault records associated with the user
+3. Execute EXPLAIN ANALYZE on an indexed query:
+```sql SELECT * FROM vault_records WHERE user_id = ? ```
+4. Capture and parse the JSON query execution plan
+5. Verify the plan uses an Index Scan or Bitmap Index Scan
+6. Verify no Sequential Scan (Seq Scan) is present
+7. Confirm actual total execution time is below threshold (e.g., <50ms)
+8. Analyze buffer usage and cost metrics
+
+**Expected Results**:
+
+Query execution plan includes Index Scan or Bitmap Index Scan
+No Seq Scan appears in the plan
+PostgreSQL optimizer selects the optimal execution path
+Query execution time is low and proportional to result set
+Buffers usage is reasonable
+
+**Benchmark**:
+Index Scan: Required
+Sequential Scan: Not Allowed
+Execution cost: Low and proportional to result size
+Execution time: <50ms
+
+**Status**:
+✅ Pass
 
 ---
 
@@ -444,21 +509,21 @@
 
 ### By Priority
 - Critical: 1 test
-- High: 13 tests
-- Medium: 5 tests
+- High: 14 tests
+- Medium: 7 tests
 - Low: 1 test
 
 ### By Category
-- SQL Operations: 5 tests
+- SQL Operations: 8 tests
 - Data Integrity: 3 tests
-- Performance: 2 tests
+- Performance: 3 tests
 - Schema Migrations: 3 tests
 - API Backend: 3 tests
 - CLI Commands: 4 tests
 
 ### Overall Status
-- Total Tests: 20
-- Passed: 20
+- Total Tests: 24
+- Passed: 24
 - Failed: 0
 - Pass Rate: 100%
 
@@ -481,5 +546,5 @@ All tests use isolated transactions with automatic cleanup. Encryption tests use
 ---
 
 Document Version: 2.0  
-Last Updated: December 17, 2025  
+Last Updated: January 3, 2026  
 Author: Caro Steadham

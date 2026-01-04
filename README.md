@@ -160,13 +160,13 @@ allure serve allure-results
 
 | Category | Test Count | Description |
 |----------|------------|-------------|
-| **SQL Operations** | 7 | CRUD + AES-256-GCM encryption |
+| **SQL Operations** | 8 | CRUD + AES-256-GCM encryption |
 | **Data Integrity** | 3 | Constraints, FKs, concurrent access |
-| **Performance** | 2 | Bulk ops & query optimization |
+| **Performance** | 3 | Bulk ops & query optimization |
 | **Schema/Migrations** | 3 | Structure, indexes, ALTER ops |
 | **API Backend** | 3 | Data flow & error handling |
 | **CLI Commands** | 4 | Export, delete, stats, queries |
-| **Total** | **22+** | **Comprehensive coverage** |
+| **Total** | **24** | **Comprehensive coverage** |
 
 
 ### 🔐 Encryption Implementation
@@ -228,7 +228,46 @@ Utilities	python-dotenv, Faker, coverage
 Benchmark	Threshold	Validates
 Bulk Insert	< 5 seconds	10,000 record insertion performance
 Indexed Query	< 100ms	Query optimization with proper indexing
+Query Plan Analysis	EXPLAIN ANALYZE JSON	Index utilization, execution time, buffer efficiency
 ```
+### 📊 Query Optimization Analysis
+
+#### EXPLAIN ANALYZE with JSON Format
+The performance tests use PostgreSQL's `EXPLAIN ANALYZE` with JSON output to validate query optimization:
+
+```sql
+EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) 
+SELECT * FROM vault_records WHERE user_id = %s
+```
+Query Plan Analysis Validates:
+
+✅ Index utilization (Seq Scan vs Index Scan)
+✅ Execution time (actual vs planned)
+✅ Buffer usage and cache efficiency
+✅ Row filtering effectiveness
+✅ Query optimization success
+Example Output Structure:
+```sql
+{
+  "Plan": {
+    "Node Type": "Index Scan",
+    "Index Name": "idx_user_id",
+    "Rows Removed by Filter": 0,
+    "Planning Time": 0.125,
+    "Execution Time": 15.432,
+    "Actual Rows": 50,
+    "Buffer Hits": 9950,
+    "Buffer Reads": 50
+  }
+}
+```
+Performance Criteria:
+
+Index Scan confirmed (not Seq Scan)
+Execution time < 50ms
+Minimal buffer misses
+Accurate row estimates
+
 ### 🔍 Database Inspection
 View Current State
 ``` python

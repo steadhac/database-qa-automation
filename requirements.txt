@@ -19,6 +19,6 @@ redis==5.0.1
 cryptography==41.0.7
 matplotlib==3.8.2
 networkx==3.2.1
-graphviz==0.22.1       # required if using pydot or pygraphviz layouts
-pydot==1.5.0           # optional, easier to use than pygraphviz
+graphviz==0.21       # required if using pydot or pygraphviz layouts
+pydot==4.0.1           # optional, easier to use than pygraphviz
 # pygraphviz==1.10      # optional, only if you want to use graphviz_layout with pygraphviz

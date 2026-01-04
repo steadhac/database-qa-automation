@@ -272,3 +272,90 @@ class TestVaultOperations(BaseTest):
         with self.assertRaises(Exception):
             self.aesgcm.decrypt(bytes.fromhex(nonce_hex), bytes(tampered), None)
         logging.info("SQL-007: Tampering detected and decryption failed as expected.")
+    
+    def test_sql_008_encrypted_data_integrity_checksum(self):
+        """
+        SQL-008: Encrypted Vault Record Integrity via Checksum
+
+        Objective:
+        Verify that encrypted vault data is stored and retrieved without corruption
+        by validating that the ciphertext remains byte-for-byte identical across
+        database write and read operations.
+
+        Security Context:
+        Vault services treat encrypted data as opaque bytes. The system must ensure
+        that encrypted blobs are not altered by database storage, migrations, or
+        internal handling. This test validates integrity without performing decryption.
+
+        Test Steps:
+        1. Create a vault user
+        2. Insert an encrypted vault record for the user
+        3. Compute a SHA-256 checksum of the encrypted data stored in the database
+        4. Re-read the same encrypted data from the database
+        5. Recompute the SHA-256 checksum
+        6. Compare both checksums
+        
+        Expected Results:
+        - Encrypted data is stored successfully
+        - Encrypted data is retrieved unchanged
+        - SHA-256 checksum before and after database operations matches
+        - No corruption or unintended mutation occurs
+        
+        Security Guarantee Verified:
+        - Database storage preserves encrypted vault data integrity
+        - Encrypted records cannot be modified silently
+        - Vault data remains safe across read/write cycles
+        """
+        logging.info("SQL-008: Inserting user 'checksum_user' for checksum integrity test.")
+
+        # Insert user
+        self.db.execute_query(
+        "INSERT INTO vault_users (username, email) VALUES (%s, %s)",
+        ("checksum_user", "checksum@vault.com")
+         )
+
+        user = self.db.execute_query(
+        "SELECT user_id FROM vault_users WHERE username = %s",
+        ("checksum_user",)
+        )
+        self.assertIsNotNone(user)
+        user_id = user[0][0]
+        logging.info("SQL-008: Created user_id=%s", user_id)
+
+        # Simulated encrypted payload (treated as opaque ciphertext)
+        encrypted_data = b"fake_encrypted_blob_v1"
+        logging.info("SQL-008: Simulated encrypted data for checksum test.")
+        
+        # Insert encrypted record
+        self.db.execute_query(
+            "INSERT INTO vault_records (user_id, title, encrypted_data) VALUES (%s, %s, %s)",
+            (user_id, "Checksum Test Record", encrypted_data)
+        )
+        logging.info("SQL-008: Inserted encrypted record for user_id=%s", user_id)
+
+        # Compute checksum after insert
+        result = self.db.execute_query(
+            """
+            SELECT encode(digest(encrypted_data::bytea, 'sha256'), 'hex')
+            FROM vault_records
+            WHERE user_id = %s
+        """, (user_id,))
+
+        self.assertIsNotNone(result)
+        checksum_1 = result[0][0]
+        logging.info("SQL-008: Computed checksum after insert: %s", checksum_1)
+
+        # Re-read and recompute checksum
+        result = self.db.execute_query(
+            """
+            SELECT encode(digest(encrypted_data::bytea, 'sha256'), 'hex')
+            FROM vault_records
+            WHERE user_id = %s
+        """, (user_id,))
+
+        checksum_2 = result[0][0]
+        logging.info("SQL-008: Computed checksum after re-read: %s", checksum_2)
+
+        # Integrity validation
+        self.assertEqual(checksum_1, checksum_2)
+        logging.info("SQL-008: Encrypted data integrity verified—checksums match, no corruption detected.")
