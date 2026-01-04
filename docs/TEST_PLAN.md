@@ -4,7 +4,7 @@
 - **Project**: Database QA Automation for Secure Vault Systems
 - **Version**: 2.0
 - **Author**: Caro Steadham
-- **Date**: December 17, 2025
+- **Date**: January 3, 2026
 - **Status**: Active
 - **Last Updated**: Added AES-256-GCM encryption testing
 
@@ -88,6 +88,7 @@ This test plan outlines the comprehensive testing strategy for validating databa
 ✅ **Authenticated encryption and tampering detection**
 ✅ **Encryption key isolation and management**
 ✅ Bulk insert performance
+✅ **Query execution plan analysis (EXPLAIN ANALYZE with JSON)**
 ✅ Query optimization validation
 ✅ API data flow simulation
 ✅ CLI command execution
@@ -100,6 +101,10 @@ This test plan outlines the comprehensive testing strategy for validating databa
 ❌ Multi-region replication
 ❌ Client-side encryption testing (zero-knowledge architecture)
 ❌ Key rotation and management systems
+❌ Query rewriting and optimization recommendations
+❌ Advanced tuning beyond benchmark validation
+❌ Cost-based optimizer deep-dive analysis
+❌ Stress testing and concurrent query scenarios
 
 ## 5. Test Categories
 
@@ -115,8 +120,9 @@ This test plan outlines the comprehensive testing strategy for validating databa
 | SQL-005 | Vault record metadata tracking | Medium |
 | SQL-006 | Encryption key isolation | High |
 | SQL-007 | Tampering detection with GCM auth tag | High |
+| SQL-008 | Encrypted data integrity checksum verification | High |
 
-**Total: 5 tests** (2 CRUD + 3 encryption/vault)
+**Total: 6 tests** (2 CRUD + 4 encryption/vault)
 
 ### 5.2 Data Integrity (tests/integrity/)
 **Objective**: Ensure database constraints and referential integrity
@@ -136,6 +142,7 @@ This test plan outlines the comprehensive testing strategy for validating databa
 |---------|-----------|-----------|----------|
 | PERF-001 | Bulk insert 100 records | < 5 seconds | High |
 | PERF-002 | Indexed query on user_id | < 100ms | High |
+| PERF-003 | Indexed query with EXPLAIN ANALIZE | < 50ms | High |
 
 **Total: 2 tests**
 
@@ -264,7 +271,7 @@ Schema drift	High	Low	Version control schemas
 Encryption key loss	High	Low	Test-only keys, documented generation
 
 ## 11. Test Deliverables
-✅ Test suite code (tests/ directory - 20+ tests)
+✅ Test suite code (tests/ directory - 24 tests)
 ✅ Test framework (framework/ directory)
 ✅ Test execution reports (HTML)
 ✅ Test documentation (this document + testcases.md)
@@ -275,10 +282,10 @@ Encryption key loss	High	Low	Test-only keys, documented generation
 
 ## 12. Test Metrics
 ### 12.1 Current Coverage
-Total Tests: 20+ test cases
-SQL Operations: 5 tests
+Total Tests: 24 test cases
+SQL Operations: 8 tests
 Data Integrity: 3 tests
-Performance: 2 tests
+Performance: 3 tests
 Schema/Migrations: 3 tests
 API Backend: 3 tests
 CLI Commands: 4 tests

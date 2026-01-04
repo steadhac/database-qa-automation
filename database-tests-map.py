@@ -1,91 +1,135 @@
 import matplotlib.pyplot as plt
 
-# -----------------------------
-# Test suites and their test cases with IDs
-# -----------------------------
+# Test suites and their test cases
 test_suites = {
-    "Test CRUD Operations": [
-        "SQL-001: Create Record and Read",
-        "SQL-002: Update Record",
-        "SQL-003: Delete Cascade",
+    "SQL CRUD": [
+        "SQL-001: Create & Read",
+        "SQL-002: Update",
+        "SQL-003: Delete"
     ],
-    "Test Vault Operations": [
-        "SQL-004: Encrypted Data",
-        "SQL-005: Metadata Tracking",
-        "SQL-006: Key Management",
-        "SQL-007: Tampering Detection"
+    "SQL Vault": [
+        "SQL-004: AES-256-GCM",
+        "SQL-005: Metadata",
+        "SQL-006: Key Isolation",
+        "SQL-007: Tampering",
+        "SQL-008: Checksum"
     ],
-    "Test Performance": [
-        "PERF-001: Write Performance",
-        "PERF-002: Read Performance",
-        "PERF-003: End-to-End Execution",
-        "PERF-004: Regression Detection",
-        "PERF-005: Production Checks"
+    "Data Integrity": [
+        "INT-001: Unique",
+        "INT-002: Foreign Keys",
+        "INT-003: Concurrent"
     ],
-    "Test SchemaValidation": [
-        "SCH-001: Table Structure",
-        "SCH-002: Index Verification",
-        "SCH-003: Schema Migration"
+    "Performance": [
+        "PERF-001: Bulk Insert",
+        "PERF-002: Query (< 100ms)",
+        "PERF-003: EXPLAIN (< 50ms)"
     ],
-    "Test CLI Commands": [
-        "CLI-001: CLI Export",
-        "CLI-002: CLI Bulk Delete",
-        "CLI-003: CLI Stats",
-        "CLI-004: CLI Query"
+    "Schema": [
+        "SCH-001: Structure",
+        "SCH-002: Index",
+        "SCH-003: Migration"
     ],
-    "Test API": [
-        "API-001: User Creation via API Workflow",
-        "API-002: Retrieval and serialized output",
-        "API-003: API Error Handling for Invalid Data"
+    "API": [
+        "API-001: Create",
+        "API-002: Retrieve",
+        "API-003: Error"
+    ],
+    "CLI": [
+        "CLI-001: Export",
+        "CLI-002: Delete",
+        "CLI-003: Stats",
+        "CLI-004: Query"
     ]
 }
 
-# -----------------------------
-# Compute bubble positions (grid)
-# -----------------------------
-suites = list(test_suites.keys())
-num_suites = len(suites)
-cols = 3  # 2 rows, 3 columns
-rows = -(-num_suites // cols)  # ceiling division
-x_spacing = 8
-y_spacing = 6
+total_tests = sum(len(tests) for tests in test_suites.values())
 
-positions = {}
-for i, suite in enumerate(suites):
-    col = i % cols
-    row = i // cols
-    positions[suite] = (col * x_spacing, -row * y_spacing)
+colors = {
+    "SQL CRUD": "#FF6B6B",
+    "SQL Vault": "#FF8C42",
+    "Data Integrity": "#4ECDC4",
+    "Performance": "#45B7D1",
+    "Schema": "#96CEB4",
+    "API": "#FFEAA7",
+    "CLI": "#DDA15E"
+}
 
-# Center horizontally
-all_x = [x for x, y in positions.values()]
-x_center = (max(all_x) + min(all_x)) / 2
-for k in positions:
-    positions[k] = (positions[k][0] - x_center, positions[k][1])
+positions = {
+    "SQL CRUD": (-10, 6),
+    "SQL Vault": (-2, 6),
+    "Data Integrity": (6, 6),
+    "Performance": (14, 6),
+    "Schema": (-6, -6),
+    "API": (2, -6),
+    "CLI": (10, -6)
+}
 
-# -----------------------------
-# Draw bubbles
-# -----------------------------
-plt.figure(figsize=(18, 10))
-ax = plt.gca()
-
-bubble_radius = 3  # slightly smaller for clarity
+fig, ax = plt.subplots(figsize=(22, 12))
 
 for suite, (x, y) in positions.items():
     tests = test_suites[suite]
+    bubble_radius = 2.8 + (len(tests) * 0.25)
     
-    # Draw suite bubble
-    circle = plt.Circle((x, y), radius=bubble_radius, color='#87CEFA', alpha=0.6, ec='navy', lw=2)
+    # Draw bubble
+    circle = plt.Circle((x, y), radius=bubble_radius, 
+                       color=colors[suite], 
+                       alpha=0.75, ec='black', lw=2.5)
     ax.add_patch(circle)
     
-    # Draw suite name on top of bubble
-    plt.text(x, y + bubble_radius*0.5, suite, ha='center', va='center', fontsize=12, fontweight='bold', color='navy')
+    # Suite title (INSIDE bubble, smaller font)
+    ax.text(x, y + bubble_radius - 1.2, suite, 
+           ha='center', va='center', fontsize=10, 
+           fontweight='bold', color='black')
     
-    # Draw test cases inside bubble, stacked
+    # Test count
+    ax.text(x, y + bubble_radius - 2, f"({len(tests)})", 
+           ha='center', va='center', fontsize=8, 
+           style='italic', color='darkslategray')
+    
+    # Test cases (tighter spacing to fit inside)
+    y_start = y + (len(tests) * 0.25)
     for i, test in enumerate(tests):
-        plt.text(x, y - 0.3*i, test, ha='center', va='center', fontsize=10, color='black')
+        test_y = y_start - (i * 0.55)
+        ax.text(x, test_y, test, 
+               ha='center', va='center', fontsize=7.5, 
+               color='darkblue', weight='normal')
 
-plt.axis('equal')
-plt.axis('off')
-plt.title("Database QA Automation: Test Suites with Test Cases", fontsize=18)
+# Main title
+ax.text(0, 14.5, "Database QA Automation Test Map", 
+       ha='center', va='center', fontsize=18, fontweight='bold')
+
+# Legend on middle left side
+legend_x = -19
+legend_y = 2
+ax.text(legend_x + 1.5, legend_y + 2.5, "Test Categories", fontsize=10, fontweight='bold')
+
+for i, (suite, color) in enumerate(colors.items()):
+    test_count = len(test_suites[suite])
+    y_pos = legend_y + 1.5 - (i * 0.75)
+    
+    rect = plt.Rectangle((legend_x + 0.2, y_pos - 0.2), 0.4, 0.4, 
+                         facecolor=color, edgecolor='black', linewidth=1)
+    ax.add_patch(rect)
+    
+    ax.text(legend_x + 1.2, y_pos, f"{suite}: {test_count}", 
+           ha='left', va='center', fontsize=8, fontweight='bold')
+
+# Summary
+summary_y = legend_y - 5.5
+rect = plt.Rectangle((legend_x + 0.2, summary_y - 0.3), 3.5, 0.7, 
+                     facecolor='lightgreen', edgecolor='darkgreen', 
+                     linewidth=2, alpha=0.6)
+ax.add_patch(rect)
+ax.text(legend_x + 2, summary_y, f"Total: {total_tests}", 
+       ha='center', va='center', fontsize=9, fontweight='bold', color='darkgreen')
+
+# Axis setup
+ax.set_xlim(-21, 20)
+ax.set_ylim(-13, 16)
+ax.set_aspect('equal')
+ax.axis('off')
+
 plt.tight_layout()
+plt.savefig('test_map.png', dpi=300, bbox_inches='tight', facecolor='white')
+print(f"✅ Test map generated: test_map.png ({total_tests} tests)")
 plt.show()
