@@ -38,7 +38,7 @@ This guide explains how performance testing works in the database QA automation 
 
 ## JSON Output Example
 
-Your tests use `FORMAT JSON` to parse results programmatically:
+The tests use `FORMAT JSON` to parse results programmatically:
 
 ```sql
 EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) 
@@ -91,7 +91,7 @@ Validates:
 
 PERF-003: Query Plan Analysis with EXPLAIN ANALYZE
 
-# Deep dive: Analyze the query plan using EXPLAIN
+## Deep dive: Analyze the query plan using EXPLAIN
 ```sql
 explain_result = self.db.execute_query(
     "EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) 
@@ -158,19 +158,6 @@ Total Time (45-100ms)
 ```
 Example: Query took 0.0452s = 45.2ms total
 
-### PERF-003: PostgreSQL Internal Timing with EXPLAIN ANALYZE(Pure Database Performance)
-
-# Deep dive: Analyze the query plan using EXPLAIN
-```sql
-explain_result = self.db.execute_query(
-    "EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) 
-     SELECT * FROM vault_records WHERE user_id = ?", (user_id,)
-)
-plan_json = explain_result[0][0][0]  # Parse JSON
-```
-Validates:
-✅ Index Scan is used (not Seq Scan)
-
 ### Why JSON Format?
 ## PostgreSQL serializes the query plan to JSON:
 
@@ -230,16 +217,15 @@ Both tests serve different purposes:
 Example SLA: "Search queries complete in < 100ms"
 PERF-002 validates this promise is kept
 
-```table
 **Validates**: Real-world performance including all overhead
 
 ### PERF-003: Query Optimization (Technical)
 **What**: Measures pure database performance (8ms)
 **Why**: Ensures queries are well-optimized
-```
+
 Example question: "Is the index being used?"
 PERF-003 shows: "Yes, Index Scan confirmed"
-```table
+
 **Validates**: Database efficiency and proper indexing
 
 ### Summary
@@ -250,7 +236,7 @@ PERF-003 shows: "Yes, Index Scan confirmed"
 | PERF-003 | Engineers/DBAs | Database only (8ms) | "Is query optimized?" |
 
 **Both are essential:** PERF-002 ensures speed, PERF-003 ensures quality.
-```
+
 ## Example Analysis
 The test with 50 records:
 PERF-002: Query returned 50 records in 0.0452s (45.2ms)
