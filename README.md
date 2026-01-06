@@ -4,7 +4,6 @@
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791.svg)](https://www.postgresql.org/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1.svg)](https://www.mysql.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![pytest](https://img.shields.io/badge/pytest-Latest-blue.svg)](https://pytest.org/)
 [![Docker](https://img.shields.io/badge/Docker-Latest-2496ED.svg)](https://www.docker.com/)
 [![Redis](https://img.shields.io/badge/Redis-7-DC382D.svg)](https://redis.io/)
