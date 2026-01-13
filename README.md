@@ -11,14 +11,53 @@
 [![EXPLAIN ANALYZE](https://img.shields.io/badge/EXPLAIN%20ANALYZE-Query%20Optimization-cyan.svg)](https://www.postgresql.org/docs/current/sql-explain.html)
 [![Visualization](https://img.shields.io/badge/Test%20Visualization-Matplotlib-blue.svg)](database-tests-map.py)
 [![Data Integrity](https://img.shields.io/badge/Data%20Integrity-Constraints-green.svg)](docs/TEST_CASES.md)
-[![Pydantic](https://img.shields.io/badge/Pydantic-Data%20Validation-purple.svg)](https://docs.pydantic.dev/)
 
 ## 🎯 Overview
 
 This project showcases enterprise-level database testing capabilities, including CRUD validation, data integrity checks, performance benchmarking, schema migrations, and AES-256-GCM encryption testing. Built with Python, Docker, and pytest, it demonstrates real-world QA engineering skills for database-driven applications.
 
 ---
+### 📊 Architecture Overview
 
+```mermaid
+graph TB
+    subgraph "Test Framework"
+        BaseTest["BaseTest<br/>(Base Test Class)"]
+        DBManager["DBManager<br/>(Connection Manager)"]
+    end
+    
+    subgraph "Test Modules"
+        SQL["SQL Operations<br/>(CRUD & Encryption)"]
+        Integrity["Data Integrity<br/>(Constraints & FKs)"]
+        Performance["Performance<br/>(Benchmarks)"]
+        Schema["Schema<br/>(Migrations)"]
+        API["API Backend<br/>(REST)"]
+        CLI["CLI Commands<br/>(Export, Stats)"]
+    end
+    
+    subgraph "Databases"
+        PG["PostgreSQL 15<br/>(Primary)"]
+        MySQL["MySQL 8.0<br/>(Secondary)"]
+        Redis["Redis 7<br/>(Cache)"]
+    end
+    
+    subgraph "Security"
+        Encryption["AES-256-GCM<br/>(Encryption)"]
+    end
+    
+    BaseTest --> DBManager
+    SQL --> DBManager
+    Integrity --> DBManager
+    Performance --> DBManager
+    Schema --> DBManager
+    API --> DBManager
+    CLI --> DBManager
+    
+    DBManager --> PG
+    DBManager --> MySQL
+    DBManager --> Redis
+    SQL --> Encryption
+```
 ## ✨ Key Features
 
 ### 🔐 Security & Encryption
@@ -140,6 +179,26 @@ python setup_db.py
 ``` bash
 pytest tests/ -v
 ```
+### 🧪 Test Execution Flow
+```mermaid
+graph LR
+    A["pytest tests/"] --> B{Test Category}
+    B -->|SQL Operations| C["8 Tests<br/>CRUD & Encryption"]
+    B -->|Data Integrity| D["3 Tests<br/>Constraints"]
+    B -->|Performance| E["3 Tests<br/>Benchmarks"]
+    B -->|Schema| F["3 Tests<br/>Migrations"]
+    B -->|API| G["3 Tests<br/>REST APIs"]
+    B -->|CLI| H["4 Tests<br/>Commands"]
+    
+    C --> I["✅ Pass/Fail<br/>HTML Report"]
+    D --> I
+    E --> I
+    F --> I
+    G --> I
+    H --> I
+    
+    I --> J["Coverage Analysis<br/>Code Coverage %"]
+```
 ### 🧪 Test Execution
 Run All Tests
 ```bash
@@ -189,6 +248,26 @@ Key Size:      256 bits (32 bytes)
 Nonce:         96 bits (12 bytes) - unique per operation
 Mode:          Authenticated Encryption with Associated Data (AEAD)
 Storage:       Hex-encoded with prepended nonce
+```
+### 🔐 Encryption Data Flow
+```mermaid
+graph TD
+    A["Plain Text Data"] -->|AES-256-GCM| B["Generate<br/>Random Nonce<br/>96-bit"]
+    B --> C["Encrypt with<br/>256-bit Key"]
+    C --> D["Create<br/>Auth Tag"]
+    D --> E["Hex Encode<br/>+ Nonce"]
+    E --> F["Store in<br/>Database"]
+    
+    F --> G["Retrieve<br/>Ciphertext"]
+    G --> H["Extract Nonce"]
+    H --> I["Decrypt with<br/>Same Key"]
+    I --> J["Verify<br/>Auth Tag"]
+    J --> K["Plain Text<br/>Recovered"]
+    
+    style A fill:#e1f5e1
+    style K fill:#e1f5e1
+    style F fill:#e3f2fd
+    style G fill:#e3f2fd
 ```
 Security Validations
 ``` bash

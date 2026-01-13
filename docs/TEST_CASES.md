@@ -286,7 +286,7 @@ WHERE user_id = %s
 
 ---
 
-#### PERF-003: Query Execution Plan & Index Usage Validation
+#### PERF-003: Indexed Query Performance with EXPLAIN ANALYZE
 **Priority**: High
 **Objective**: Validate that indexed queries on vault_records.user_id perform efficiently and that the PostgreSQL query planner uses indexes correctly.
 

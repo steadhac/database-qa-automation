@@ -122,7 +122,7 @@ This test plan outlines the comprehensive testing strategy for validating databa
 | SQL-007 | Tampering detection with GCM auth tag | High |
 | SQL-008 | Encrypted data integrity checksum verification | High |
 
-**Total: 6 tests** (2 CRUD + 4 encryption/vault)
+**Total: 8 tests** (3 CRUD + 5 encryption/vault)
 
 ### 5.2 Data Integrity (tests/integrity/)
 **Objective**: Ensure database constraints and referential integrity
@@ -144,7 +144,7 @@ This test plan outlines the comprehensive testing strategy for validating databa
 | PERF-002 | Indexed query on user_id | < 100ms | High |
 | PERF-003 | Indexed query with EXPLAIN ANALIZE | < 50ms | High |
 
-**Total: 2 tests**
+**Total: 3 tests**
 
 ### 5.4 Schema/Migrations (tests/migrations/)
 **Objective**: Validate database schema structure and migration capability
