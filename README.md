@@ -181,23 +181,67 @@ pytest tests/ -v
 ```
 ### 🧪 Test Execution Flow
 ```mermaid
-graph LR
+graph TD
     A["pytest tests/"] --> B{Test Category}
-    B -->|SQL Operations| C["8 Tests<br/>CRUD & Encryption"]
-    B -->|Data Integrity| D["3 Tests<br/>Constraints"]
-    B -->|Performance| E["3 Tests<br/>Benchmarks"]
-    B -->|Schema| F["3 Tests<br/>Migrations"]
-    B -->|API| G["3 Tests<br/>REST APIs"]
-    B -->|CLI| H["4 Tests<br/>Commands"]
     
-    C --> I["✅ Pass/Fail<br/>HTML Report"]
-    D --> I
-    E --> I
-    F --> I
-    G --> I
-    H --> I
+    %% SQL Operations
+    B -->|SQL Operations| C1["Run 8 SQL Tests<br/>CRUD & Encryption"]
+    C1 --> C2["DB Setup<br/>(PostgreSQL/MySQL)"]
+    C2 --> C3["Execute SQL Queries"]
+    C3 --> C4["Validate Results"]
+    C4 --> C5["Encryption Checks"]
+    C5 --> R1["HTML Report"]
+    C5 --> R2["Coverage %"]
     
-    I --> J["Coverage Analysis<br/>Code Coverage %"]
+    %% Data Integrity
+    B -->|Data Integrity| D1["Run 3 Integrity Tests"]
+    D1 --> D2["Setup Constraints"]
+    D2 --> D3["Insert/Update/Delete"]
+    D3 --> D4["Check FKs & Constraints"]
+    D4 --> R1
+    D4 --> R2
+
+    %% Performance
+    B -->|Performance| E1["Run 3 Performance Tests"]
+    E1 --> E2["Bulk Insert/Query"]
+    E2 --> E3["EXPLAIN ANALYZE"]
+    E3 --> E4["Benchmark Timing"]
+    E4 --> R1
+    E4 --> R2
+    E4 --> E5["Performance Report"]
+
+    %% Schema
+    B -->|Schema| F1["Run 3 Migration Tests"]
+    F1 --> F2["Apply Migrations"]
+    F2 --> F3["Validate Schema"]
+    F3 --> F4["Check Indexes"]
+    F4 --> R1
+    F4 --> R2
+
+    %% API
+    B -->|API| G1["Run 3 API Tests"]
+    G1 --> G2["Start API Server"]
+    G2 --> G3["Send REST Requests"]
+    G3 --> G4["Validate Responses"]
+    G4 --> R1
+    G4 --> R2
+
+    %% CLI
+    B -->|CLI| H1["Run 4 CLI Tests"]
+    H1 --> H2["Invoke CLI Commands"]
+    H2 --> H3["Check Output/DB State"]
+    H3 --> R1
+    H3 --> R2
+
+    %% Reports
+    R1["✅ Pass/Fail<br/>HTML Report"]
+    R2["Coverage Analysis<br/>Code Coverage %"]
+    E5["Performance Report<br/>(Benchmarks, Timing)"]
+
+    %% Styling
+    style E5 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style R1 fill:#e1f5e1,stroke:#388e3c,stroke-width:2px
+    style R2 fill:#fffde7,stroke:#fbc02d,stroke-width:2px
 ```
 ### 🧪 Test Execution
 Run All Tests
