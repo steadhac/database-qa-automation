@@ -180,29 +180,25 @@ python setup_db.py
 pytest tests/ -v
 ```
 ### 🧪 Test Execution Flow
-```mermaid
 graph TD
     A["pytest tests/"] --> B{Test Category}
-    
-    %% SQL Operations
-    B -->|SQL Operations| C1["Run 8 SQL Tests<br/>CRUD & Encryption"]
-    C1 --> C2["DB Setup<br/>(PostgreSQL/MySQL)"]
-    C2 --> C3["Execute SQL Queries"]
+
+    B -->|SQL| C1["8 SQL Tests<br/>CRUD & Encryption"]
+    C1 --> C2["DB Setup"]
+    C2 --> C3["Execute Queries"]
     C3 --> C4["Validate Results"]
     C4 --> C5["Encryption Checks"]
-    C5 --> R1["HTML Report"]
-    C5 --> R2["Coverage %"]
-    
-    %% Data Integrity
-    B -->|Data Integrity| D1["Run 3 Integrity Tests"]
+    C5 --> R1
+    C5 --> R2
+
+    B -->|Data Integrity| D1["3 Integrity Tests"]
     D1 --> D2["Setup Constraints"]
     D2 --> D3["Insert/Update/Delete"]
     D3 --> D4["Check FKs & Constraints"]
     D4 --> R1
     D4 --> R2
 
-    %% Performance
-    B -->|Performance| E1["Run 3 Performance Tests"]
+    B -->|Performance| E1["3 Performance Tests"]
     E1 --> E2["Bulk Insert/Query"]
     E2 --> E3["EXPLAIN ANALYZE"]
     E3 --> E4["Benchmark Timing"]
@@ -210,39 +206,33 @@ graph TD
     E4 --> R2
     E4 --> E5["Performance Report"]
 
-    %% Schema
-    B -->|Schema| F1["Run 3 Migration Tests"]
+    B -->|Schema| F1["3 Migration Tests"]
     F1 --> F2["Apply Migrations"]
     F2 --> F3["Validate Schema"]
     F3 --> F4["Check Indexes"]
     F4 --> R1
     F4 --> R2
 
-    %% API
-    B -->|API| G1["Run 3 API Tests"]
+    B -->|API| G1["3 API Tests"]
     G1 --> G2["Start API Server"]
     G2 --> G3["Send REST Requests"]
     G3 --> G4["Validate Responses"]
     G4 --> R1
     G4 --> R2
 
-    %% CLI
-    B -->|CLI| H1["Run 4 CLI Tests"]
+    B -->|CLI| H1["4 CLI Tests"]
     H1 --> H2["Invoke CLI Commands"]
     H2 --> H3["Check Output/DB State"]
     H3 --> R1
     H3 --> R2
 
-    %% Reports
-    R1["✅ Pass/Fail<br/>HTML Report"]
-    R2["Coverage Analysis<br/>Code Coverage %"]
-    E5["Performance Report<br/>(Benchmarks, Timing)"]
+    R1["✅ HTML Report"]
+    R2["Coverage %"]
+    E5["Performance Report"]
 
-    %% Styling
     style E5 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
     style R1 fill:#e1f5e1,stroke:#388e3c,stroke-width:2px
     style R2 fill:#fffde7,stroke:#fbc02d,stroke-width:2px
-```
 ### 🧪 Test Execution
 Run All Tests
 ```bash
