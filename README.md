@@ -230,10 +230,10 @@ graph TD
     R1["✅ HTML Report"]
     R2["Coverage %"]
     E5["Performance Report"]
-    
-style E5 fill:#90caf9,stroke:#1565c0,stroke-width:2px
-style R1 fill:#81c784,stroke:#1b5e20,stroke-width:2px
-style R2 fill:#ffe082,stroke:#f9a825,stroke-width:2px
+
+style E5 fill:#1976d2,stroke:#ffffff,stroke-width:2px
+style R1 fill:#388e3c,stroke:#ffffff,stroke-width:2px
+style R2 fill:#fbc02d,stroke:#000000,stroke-width:2px
 ```
 ### 🧪 Test Execution
 Run All Tests
