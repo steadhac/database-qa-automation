@@ -180,6 +180,7 @@ python setup_db.py
 pytest tests/ -v
 ```
 ### 🧪 Test Execution Flow
+```mermaid
 graph TD
     A["pytest tests/"] --> B{Test Category}
 
@@ -233,6 +234,7 @@ graph TD
     style E5 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
     style R1 fill:#e1f5e1,stroke:#388e3c,stroke-width:2px
     style R2 fill:#fffde7,stroke:#fbc02d,stroke-width:2px
+```
 ### 🧪 Test Execution
 Run All Tests
 ```bash
